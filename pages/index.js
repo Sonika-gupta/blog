@@ -12,16 +12,24 @@ export default function Home () {
       </Head>
 
       <main>
-        <h1>My Blog</h1>
+        <ul>
+          {blogPosts.map(item => (
+            <BlogListItem key={item.slug} {...item} />
+          ))}
+        </ul>
       </main>
-
-      <ul>
-        {blogPosts.map(item => (
-          <li key={item.slug}>
-            <Link href={`/blog/${item.slug}`}>{item.title}</Link>
-          </li>
-        ))}
-      </ul>
     </div>
+  )
+}
+
+function BlogListItem ({ slug, title, date, content }) {
+  return (
+    <Link href={`/blog/${slug}`}>
+      <li className='border-gray-200 border-2 rounded-md p-4 my-3 shadow hover:shadow-lg space-y-1 cursor-pointer'>
+        <h5 className='text-xl text-blue-700'>{title}</h5>
+        <div className='text-sm text-gray-600'>{date}</div>
+        <p className='truncate'>{content}</p>
+      </li>
+    </Link>
   )
 }

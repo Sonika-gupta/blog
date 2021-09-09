@@ -10,10 +10,12 @@ export default function BlogPage ({ title, date, content }) {
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <main>
-        <h1>{title}</h1>
-        <h6>{date}</h6>
-        <p>{content}</p>
+      <main className='border-t-2 p-4 border-black space-y-2'>
+        <h1 className='text-red-700 text-3xl font-extrabold font-serif'>
+          {title}
+        </h1>
+        <h6 className='text-gray-600'>{date}</h6>
+        <p className='font-mono'>{content}</p>
       </main>
     </div>
   )
