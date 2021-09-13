@@ -1,8 +1,9 @@
+import { data } from 'autoprefixer'
 import Head from 'next/head'
 import Link from 'next/link'
-import { blogPosts } from '../lib/data'
+import { getAllPosts } from '../lib/data'
 
-export default function Home () {
+export default function Home ({ posts }) {
   return (
     <div>
       <Head>
@@ -13,13 +14,31 @@ export default function Home () {
 
       <main>
         <ul>
-          {blogPosts.map(item => (
+          {posts.map(item => (
             <BlogListItem key={item.slug} {...item} />
           ))}
         </ul>
       </main>
     </div>
   )
+}
+
+export async function getStaticProps () {
+  const posts = getAllPosts()
+  return {
+    props: {
+      posts: posts.map(({ data, content, slug }) => ({
+        title: data.title,
+        date: data.date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }),
+        content,
+        slug
+      }))
+    }
+  }
 }
 
 function BlogListItem ({ slug, title, date, content }) {

@@ -1,5 +1,7 @@
 import Head from 'next/head'
-import { blogPosts } from '../../lib/data'
+import { getAllPosts } from '../../lib/data'
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
 
 export default function BlogPage ({ title, date, content }) {
   return (
@@ -15,7 +17,9 @@ export default function BlogPage ({ title, date, content }) {
           {title}
         </h1>
         <h6 className='text-gray-600'>{date}</h6>
-        <p className='font-mono'>{content}</p>
+        <p className='prose'>
+          <MDXRemote {...content} />
+        </p>
       </main>
     </div>
   )
@@ -23,12 +27,27 @@ export default function BlogPage ({ title, date, content }) {
 
 export async function getStaticProps (context) {
   console.log('context', context)
-  return { props: blogPosts.find(item => item.slug === context.params.slug) }
+  const posts = getAllPosts()
+  const { data, content } = posts.find(
+    item => item.slug === context.params.slug
+  )
+
+  return {
+    props: {
+      title: data.title,
+      date: data.date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }),
+      content: await serialize(content)
+    }
+  }
 }
 
 export async function getStaticPaths () {
   return {
-    paths: blogPosts.map(item => ({ params: { slug: item.slug } })),
+    paths: getAllPosts().map(item => ({ params: { slug: item.slug } })),
     fallback: false
   }
 }
