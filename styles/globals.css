@@ -7,6 +7,9 @@
     @apply text-blue-500 hover:text-blue-300 font-semibold;
   }
 }
+.ql-editor {
+  min-height: 300px;
+}
 
 /* html,
 body {

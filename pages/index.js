@@ -1,9 +1,48 @@
 import { data } from 'autoprefixer'
 import Head from 'next/head'
 import Link from 'next/link'
-import { getAllPosts } from '../lib/data'
+import { useState, useEffect, useReducer } from 'react'
+// import { getAllPosts } from '../lib/data'
+import dynamic from 'next/dynamic'
+import { test } from 'gray-matter'
 
-export default function Home ({ posts }) {
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading ...</p>
+})
+
+const initForm = { title: '', content: '' }
+
+export default function Home () {
+  const [form, setForm] = useReducer(
+    (state, newState) => ({
+      ...state,
+      ...newState
+    }),
+    initForm
+  )
+  const [posts, setPosts] = useState([])
+
+  useEffect(() => {
+    setPosts(JSON.parse(localStorage.getItem('posts') || '[]'))
+  }, [])
+
+  function publishPost (e) {
+    e.preventDefault()
+    console.log('submitting', form)
+    const post = {
+      ...form,
+      date: new Date().toLocaleString('en-US', {
+        dateStyle: 'long',
+        timeStyle: 'short'
+      })
+    }
+    posts.push(post)
+    setPosts(posts)
+    localStorage.setItem('posts', JSON.stringify(posts))
+    setForm(initForm)
+  }
+
   return (
     <div>
       <Head>
@@ -13,32 +52,36 @@ export default function Home ({ posts }) {
       </Head>
 
       <main>
+        <p> Total Posts: {posts.length} </p>
         <ul>
           {posts.map(item => (
             <BlogListItem key={item.slug} {...item} />
           ))}
         </ul>
+        <form onSubmit={publishPost}>
+          <div className='my-2'>
+            <label htmlFor='title'>Title for the Post</label>
+            <input
+              type='text'
+              name='title'
+              value={form.title}
+              onChange={e => setForm({ title: e.target.value })}
+              className='border-2 border-gray-200 rounded-md outline-none w-2/3 h-10 p-2 mx-3.5'
+            />
+            <button type='submit' className='float-right text-blue-800'>
+              Publish
+            </button>
+          </div>
+          <ReactQuill
+            value={form.content}
+            name='content'
+            theme='snow'
+            onChange={value => setForm({ content: value })}
+          />
+        </form>
       </main>
     </div>
   )
-}
-
-export async function getStaticProps () {
-  const posts = getAllPosts()
-  return {
-    props: {
-      posts: posts.map(({ data, content, slug }) => ({
-        title: data.title,
-        date: data.date.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        }),
-        content,
-        slug
-      }))
-    }
-  }
 }
 
 function BlogListItem ({ slug, title, date, content }) {

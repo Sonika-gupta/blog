@@ -1,3 +1,4 @@
+import 'react-quill/dist/quill.snow.css'
 import '../styles/globals.css'
 import Link from 'next/link'
 
