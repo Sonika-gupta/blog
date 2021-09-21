@@ -1,9 +1,9 @@
 import Head from 'next/head'
-import { getAllPosts } from '../../lib/data'
+import { getAllArticles, getArticleBySlug } from '../../../lib/data'
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
 
-export default function BlogPage ({ title, date, content }) {
+export default function BlogPage ({ lang, title, date, content }) {
   return (
     <div>
       <Head>
@@ -25,15 +25,11 @@ export default function BlogPage ({ title, date, content }) {
   )
 }
 
-export async function getStaticProps (context) {
-  console.log('context', context)
-  const posts = getAllPosts()
-  const { data, content } = posts.find(
-    item => item.slug === context.params.slug
-  )
-
+export async function getStaticProps ({ params }) {
+  const { data, content } = getArticleBySlug(params?.lang, params?.slug)
   return {
     props: {
+      lang: data.lang,
       title: data.title,
       date: data.date.toLocaleDateString('en-US', {
         year: 'numeric',
@@ -46,8 +42,11 @@ export async function getStaticProps (context) {
 }
 
 export async function getStaticPaths () {
+  const articles = getAllArticles()
   return {
-    paths: getAllPosts().map(item => ({ params: { slug: item.slug } })),
+    paths: articles.map(item => ({
+      params: { lang: item.data.lang, slug: item.slug }
+    })),
     fallback: false
   }
 }
