@@ -1,11 +1,12 @@
 import { useContext } from 'react'
-import { defaultLang, LanguageContext } from '../intl/LanguageProvider'
 import translations from '../intl/translations'
 
+import { useRouter } from 'next/router'
+
 export default function useTranslation () {
-  const { lang } = useContext(LanguageContext)
+  const { locale, defaultLocale } = useRouter()
   function translate (key) {
-    return translations[lang][key] || translations[defaultLang][key]
+    return translations[locale][key] || translations[defaultLocale][key]
   }
-  return { translate, lang }
+  return { translate, locale }
 }

@@ -1,24 +1,18 @@
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { useContext } from 'react'
 import useTranslation from '../hooks/useTranslation'
-import { LanguageContext, languages } from '../intl/LanguageProvider'
 
 export default function Header () {
-  const { translate, lang } = useTranslation()
-  const { setLang } = useContext(LanguageContext)
+  const { translate, locale } = useTranslation()
   const router = useRouter()
 
   function toggleLang () {
-    const currentLang = lang
-    const index = languages.findIndex(locale => locale === lang) + 1
-    const newLang = languages[index % languages.length]
-    router.push(
-      router.pathname,
-      router.asPath.replace(currentLang, `${newLang}`)
-    )
-    setLang(newLang)
-    localStorage.setItem('language', newLang)
+    const currentLocale = locale
+    const index = router.locales.findIndex(item => item === locale) + 1
+    const newLocale = router.locales[index % router.locales.length]
+    console.log('changing language', router)
+    router.replace(router.pathname, router.asPath, { locale: newLocale })
+    localStorage.setItem('language', newLocale)
   }
   return (
     <header>
@@ -26,7 +20,7 @@ export default function Header () {
         onClick={toggleLang}
         className='uppercase float-right text-blue-500 cursor-pointer'
       >
-        {lang}
+        {router.locale}
       </button>
       <h1 className='text-5xl my-2 font-bold text-center'>
         {translate('blogName')}
@@ -34,13 +28,19 @@ export default function Header () {
       <nav className='my-4'>
         <ul className='flex flex-row space-x-4 justify-center p-2'>
           <li>
-            <Link href='/'>{translate('home')}</Link>
+            <Link href='/' locale={router.locale}>
+              {translate('home')}
+            </Link>
           </li>
           <li>
-            <Link href={`/${lang}/articles`}>{translate('articles')}</Link>
+            <Link href='/articles' locale={router.locale}>
+              {translate('articles')}
+            </Link>
           </li>
           <li>
-            <Link href='/about'>{translate('about')}</Link>
+            <Link href='/about' locale={router.locale}>
+              {translate('about')}
+            </Link>
           </li>
         </ul>
       </nav>

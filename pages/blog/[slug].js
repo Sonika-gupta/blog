@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { getAllArticles, getArticleBySlug } from '../../../lib/data'
+import { getAllArticles, getArticleBySlug } from '../../lib/data'
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
 

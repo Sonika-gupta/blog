@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import useTranslation from '../../hooks/useTranslation'
-import { getAllArticles } from '../../lib/data'
+import useTranslation from '../hooks/useTranslation'
+import { getAllArticles } from '../lib/data'
 
 export default function Articles ({ articles }) {
   const { translate } = useTranslation()
@@ -22,9 +22,9 @@ export default function Articles ({ articles }) {
   )
 }
 
-function BlogListItem ({ lang, slug, title, date, content }) {
+function BlogListItem ({ locale, slug, title, date, content }) {
   return (
-    <Link href={`/${lang}/blog/${slug}`}>
+    <Link href={`/${locale}/blog/${slug}`}>
       <li className='border-gray-200 border-2 rounded-md p-4 my-3 shadow hover:shadow-lg space-y-1 cursor-pointer'>
         <h5 className='text-xl text-blue-700'>{title}</h5>
         <div className='text-sm text-gray-600'>{date}</div>
@@ -34,12 +34,10 @@ function BlogListItem ({ lang, slug, title, date, content }) {
   )
 }
 
-export function getStaticProps (context) {
-  const lang = context.params?.lang || 'en'
-
+export function getStaticProps ({ locale }) {
   return {
     props: {
-      articles: getAllArticles(lang).map(({ data, content, slug }) => ({
+      articles: getAllArticles(locale).map(({ data, content, slug }) => ({
         lang: data.lang,
         title: data.title,
         date: data.date.toLocaleDateString('en-US', {
@@ -51,28 +49,5 @@ export function getStaticProps (context) {
         slug
       }))
     }
-  }
-}
-
-export function getStaticPaths () {
-  return {
-    paths: [
-      {
-        params: {
-          lang: 'en'
-        }
-      },
-      {
-        params: {
-          lang: 'hi'
-        }
-      },
-      {
-        params: {
-          lang: 'it'
-        }
-      }
-    ],
-    fallback: false
   }
 }
