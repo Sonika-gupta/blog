@@ -41,8 +41,9 @@ function readUsers () {
   return queryDb('read')
 }
 
-function createUser (user) {
-  return queryDb('create', user)
+async function createUser (user) {
+  const ack = await queryDb('create', user)
+  return ack.insertedCount && user
 }
 
 function readUserByEmail (email) {

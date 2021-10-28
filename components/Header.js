@@ -29,7 +29,7 @@ export default function Header () {
         </h1>
       </div>
       <div className='float-right'>
-        {user.email ? (
+        {user._id ? (
           <span>
             {user.fname} {user.lname}
           </span>

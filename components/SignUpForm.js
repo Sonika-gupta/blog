@@ -15,7 +15,7 @@ export default function SignUpForm ({ closeDialog }) {
     return {
       email,
       fname: data.get('fname'),
-      lanme: data.get('lname'),
+      lname: data.get('lname'),
       password: data.get('password')
     }
   }
@@ -30,8 +30,9 @@ export default function SignUpForm ({ closeDialog }) {
 
   async function handleSignup (e) {
     e.preventDefault()
-    const isAdded = await addUser(getFormData(e.target))
-    if (isAdded) setUser(user)
+    const addedUser = await addUser(getFormData(e.target))
+    console.log(addedUser)
+    if (addedUser._id) setUser(addedUser)
     closeDialog()
   }
 
