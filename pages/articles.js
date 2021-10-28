@@ -34,10 +34,11 @@ function BlogListItem ({ locale, slug, title, date, content }) {
   )
 }
 
-export function getStaticProps ({ locale }) {
+export async function getStaticProps ({ locale }) {
+  const articles = await getAllArticles(locale)
   return {
     props: {
-      articles: getAllArticles(locale).map(({ data, content, slug }) => ({
+      articles: articles.map(({ data, content, slug }) => ({
         lang: data.lang,
         title: data.title,
         date: data.date.toLocaleDateString('en-US', {
