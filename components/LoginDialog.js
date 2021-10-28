@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { addUser } from '../lib/data'
 
 export default function LoginDialog ({ open }) {
   const [signIn, setSignIn] = useState(true)
@@ -8,9 +9,16 @@ export default function LoginDialog ({ open }) {
     console.log(form)
   }
 
-  function authenticateEmail (e, form) {
+  async function handleSignup (e) {
     e.preventDefault()
-    console.log(form)
+    const data = new FormData(e.target)
+    const user = {
+      email: data.get('email'),
+      fname: data.get('fname'),
+      lanme: data.get('lname'),
+      password: data.get('password')
+    }
+    console.log(await addUser(user))
   }
   return (
     <div className='fixed inset-0 z-50 bg-black bg-opacity-40 flex'>
@@ -94,7 +102,7 @@ export default function LoginDialog ({ open }) {
               </h6>
             </div>
             <div>
-              <form name='signUp'>
+              <form name='signUp' onSubmit={handleSignup}>
                 <div className='relative w-full mb-3'>
                   <label
                     className='block uppercase text-gray-700 text-xs font-bold mb-2'
@@ -104,17 +112,61 @@ export default function LoginDialog ({ open }) {
                   </label>
                   <input
                     type='email'
+                    name='email'
                     className='border-0 p-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full'
                     placeholder='Email'
+                  />
+                </div>
+
+                <div className='relative w-full mb-3 flex'>
+                  <div className='w-1/2 mr-1'>
+                    <label
+                      className='block uppercase text-gray-700 text-xs font-bold mb-2'
+                      htmlFor='fname'
+                    >
+                      First Name
+                    </label>
+                    <input
+                      name='fname'
+                      className='border-0 p-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full'
+                      placeholder='John'
+                    />
+                  </div>
+                  <div className='w-1/2 ml-1'>
+                    <label
+                      className='block uppercase text-gray-700 text-xs font-bold mb-2'
+                      htmlFor='lname'
+                    >
+                      Last Name
+                    </label>
+                    <input
+                      name='lname'
+                      className='border-0 p-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full'
+                      placeholder='Doe'
+                    />
+                  </div>
+                </div>
+
+                <div className='relative w-full mb-3'>
+                  <label
+                    className='block uppercase text-gray-700 text-xs font-bold mb-2'
+                    htmlFor='password'
+                  >
+                    Password
+                  </label>
+                  <input
+                    type='password'
+                    name='password'
+                    className='border-0 p-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full'
+                    placeholder='Password'
                   />
                 </div>
 
                 <div className='text-center mt-6'>
                   <button
                     className='bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded hover:shadow-lg outline-none focus:outline-none w-full'
-                    type='button'
+                    type='submit'
                     style={{ transition: 'all .15s ease' }}
-                    onClick={authenticateEmail}
                   >
                     Sign up
                   </button>
