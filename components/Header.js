@@ -1,14 +1,16 @@
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import useTranslation from '../hooks/useTranslation'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import LoginDialog from './LoginDialog'
+import UserContext from '../userContext'
 
 export default function Header () {
   const { translate, locale } = useTranslation()
   const router = useRouter()
 
   const [openLogin, setOpenLogin] = useState(false)
+  const { user } = useContext(UserContext)
 
   function toggleLang () {
     const currentLocale = locale
@@ -27,12 +29,18 @@ export default function Header () {
         </h1>
       </div>
       <div className='float-right'>
-        <button
-          onClick={() => setOpenLogin(true)}
-          className='uppercase text-blue-500 cursor-pointer p-4'
-        >
-          Log in
-        </button>
+        {user.email ? (
+          <span>
+            {user.fname} {user.lname}
+          </span>
+        ) : (
+          <button
+            onClick={() => setOpenLogin(true)}
+            className='uppercase text-blue-500 cursor-pointer p-4'
+          >
+            Log in
+          </button>
+        )}
         <button
           onClick={toggleLang}
           className='uppercase text-blue-500 cursor-pointer p-4'
@@ -40,7 +48,7 @@ export default function Header () {
           {router.locale}
         </button>
       </div>
-      <LoginDialog open={openLogin} />
+      <LoginDialog open={openLogin} closeDialog={() => setOpenLogin(false)} />
       <nav className='my-4'>
         <ul className='flex flex-row space-x-4 justify-center p-2'>
           <li>

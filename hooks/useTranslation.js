@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import translations from '../intl/translations'
 
 import { useRouter } from 'next/router'

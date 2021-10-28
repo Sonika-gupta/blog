@@ -5,30 +5,57 @@ const client = new MongoClient(process.env.DB_URI, {
   useUnifiedTopology: true
 })
 
-async function readUser () {
+async function queryDb (query, data) {
+  let value
   await client.connect()
-  const user = await client
-    .db(process.env.DB_NAME)
-    .collection('users')
-    .findOne()
-    .toArray()
+  const collection = await client.db(process.env.DB_NAME).collection('users')
+
+  switch (query) {
+    case 'create':
+      value = await collection.insert(data)
+      break
+
+    case 'read':
+      value = await collection.find().toArray()
+      break
+
+    case 'authenticate':
+      const user = await collection.findOne({ email: data.email })
+      value = user.password === data.password ? user : null
+      break
+
+    case 'readOne':
+      value = await collection.findOne(data)
+      break
+
+    default:
+      console.log('reached default!')
+      break
+  }
   client.close()
-  console.log('user', user)
-  return user
+  console.log('model value user', value)
+  return value
 }
 
-async function createUser (user) {
-  await client.connect()
-  const addedUser = await client
-    .db(process.env.DB_NAME)
-    .collection('users')
-    .insert(user)
-  client.close()
-  console.log('user', addedUser)
-  return addedUser
+function readUsers () {
+  return queryDb('read')
+}
+
+function createUser (user) {
+  return queryDb('create', user)
+}
+
+function readUserByEmail (email) {
+  return queryDb('readOne', email)
+}
+
+function authenticateUser (creds) {
+  return queryDb('authenticate', creds)
 }
 
 module.exports = {
-  readUser,
-  createUser
+  readUsers,
+  createUser,
+  readUserByEmail,
+  authenticateUser
 }
