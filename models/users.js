@@ -12,7 +12,7 @@ async function queryDb (query, data) {
 
   switch (query) {
     case 'create':
-      value = await collection.insert(data)
+      value = await collection.insertOne(data)
       break
 
     case 'read':

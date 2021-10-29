@@ -1,47 +1,12 @@
 import { data } from 'autoprefixer'
 import Head from 'next/head'
 import Link from 'next/link'
-import { useState, useEffect, useReducer } from 'react'
-// import { getAllPosts } from '../lib/data'
-import dynamic from 'next/dynamic'
 import { test } from 'gray-matter'
+import useTranslation from '../hooks/useTranslation'
+import { getAllArticles } from '../lib/data'
 
-const ReactQuill = dynamic(() => import('react-quill'), {
-  ssr: false,
-  loading: () => <p>Loading ...</p>
-})
-
-const initForm = { title: '', content: '' }
-
-export default function Home () {
-  const [form, setForm] = useReducer(
-    (state, newState) => ({
-      ...state,
-      ...newState
-    }),
-    initForm
-  )
-  const [posts, setPosts] = useState([])
-
-  useEffect(() => {
-    setPosts(JSON.parse(localStorage.getItem('posts') || '[]'))
-  }, [])
-
-  function publishPost (e) {
-    e.preventDefault()
-    console.log('submitting', form)
-    const post = {
-      ...form,
-      date: new Date().toLocaleString('en-US', {
-        dateStyle: 'long',
-        timeStyle: 'short'
-      })
-    }
-    posts.push(post)
-    setPosts(posts)
-    localStorage.setItem('posts', JSON.stringify(posts))
-    setForm(initForm)
-  }
+export default function Home ({ articles }) {
+  const { translate } = useTranslation()
 
   return (
     <div>
@@ -52,41 +17,26 @@ export default function Home () {
       </Head>
 
       <main>
-        <p> Total Posts: {posts.length} </p>
+        <p>
+          {translate('count')}: {articles.length}
+        </p>
         <ul>
-          {posts.map(item => (
-            <BlogListItem key={item.slug} {...item} />
-          ))}
+          {articles.length ? (
+            articles.map(item => <BlogListItem key={item.slug} {...item} />)
+          ) : (
+            <div className='text-gray-500 text-sm h-full'>
+              <p className='align-middle'>{translate('zeroArticles')}</p>
+            </div>
+          )}
         </ul>
-        <form onSubmit={publishPost}>
-          <div className='my-2'>
-            <label htmlFor='title'>Title for the Post</label>
-            <input
-              type='text'
-              name='title'
-              value={form.title}
-              onChange={e => setForm({ title: e.target.value })}
-              className='border-2 border-gray-200 rounded-md outline-none w-2/3 h-10 p-2 mx-3.5'
-            />
-            <button type='submit' className='float-right text-blue-800'>
-              Publish
-            </button>
-          </div>
-          <ReactQuill
-            value={form.content}
-            name='content'
-            theme='snow'
-            onChange={value => setForm({ content: value })}
-          />
-        </form>
       </main>
     </div>
   )
 }
 
-function BlogListItem ({ slug, title, date, content }) {
+function BlogListItem ({ locale, slug, title, date, content }) {
   return (
-    <Link href={`/blog/${slug}`}>
+    <Link href={`/${locale}/blog/${slug}`}>
       <li className='border-gray-200 border-2 rounded-md p-4 my-3 shadow hover:shadow-lg space-y-1 cursor-pointer'>
         <h5 className='text-xl text-blue-700'>{title}</h5>
         <div className='text-sm text-gray-600'>{date}</div>
@@ -94,4 +44,13 @@ function BlogListItem ({ slug, title, date, content }) {
       </li>
     </Link>
   )
+}
+
+export async function getStaticProps ({ locale }) {
+  const articles = await getAllArticles(locale)
+  return {
+    props: {
+      articles
+    }
+  }
 }
