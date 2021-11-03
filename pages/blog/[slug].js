@@ -3,7 +3,7 @@ import { getAllArticles, getArticleBySlug } from '../../lib/data'
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
 
-export default function BlogPage ({ lang, title, date, content }) {
+export default function BlogPage ({ title, date, content }) {
   return (
     <div>
       <Head>
@@ -26,26 +26,23 @@ export default function BlogPage ({ lang, title, date, content }) {
 }
 
 export async function getStaticProps ({ params }) {
-  const { data, content } = getArticleBySlug(params?.lang, params?.slug)
+  const article = await getArticleBySlug(params?.slug)
+  console.log('prop', article)
   return {
     props: {
-      lang: data.lang,
-      title: data.title,
-      date: data.date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }),
-      content: await serialize(content)
+      ...article,
+      content: await serialize(article.content)
     }
   }
 }
 
 export async function getStaticPaths () {
-  const articles = getAllArticles()
+  const articles = await getAllArticles()
+  // console.log(articles)
   return {
     paths: articles.map(item => ({
-      params: { lang: item.data.lang, slug: item.slug }
+      params: { slug: item.slug },
+      locale: item.lang
     })),
     fallback: false
   }

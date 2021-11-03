@@ -13,7 +13,6 @@ async function readArticles () {
     .find()
     .toArray()
   client.close()
-  console.log('articles', articles)
   return articles
 }
 
@@ -25,8 +24,19 @@ async function readArticlesByLang ({ lang }) {
     .find({ lang })
     .toArray()
   client.close()
-  console.log('articles', articles)
   return articles
+}
+
+async function readArticleBySlug ({ slug }) {
+  await client.connect()
+  const article = await client
+    .db(process.env.DB_NAME)
+    .collection('articles')
+    .findOne({ slug })
+
+  console.log('readArticlebyslug', slug, article)
+  client.close()
+  return article
 }
 
 async function createArticle (article) {
@@ -36,12 +46,12 @@ async function createArticle (article) {
     .collection('articles')
     .insertOne(article)
   client.close()
-  console.log(ack)
   return ack.insertedId ? article : null
 }
 
 module.exports = {
   readArticles,
   readArticlesByLang,
+  readArticleBySlug,
   createArticle
 }
