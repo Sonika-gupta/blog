@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react'
 import { authenticateUser } from '../lib/data'
 import UserContext from '../userContext'
+import Error from './Error'
 
 export default function SignInForm ({ closeDialog }) {
   const { user, setUser } = useContext(UserContext)
@@ -26,10 +27,12 @@ export default function SignInForm ({ closeDialog }) {
       <div className='text-center mb-3'>
         <h6 className='text-gray-600 text-sm font-bold'> Log In </h6>
       </div>
-      <form name='signIn' onSubmit={handleSignIn}>
-        {error.show && (
-          <span className='text-sm text-red-500 ml-1'>{error.msg}</span>
-        )}
+      <form
+        name='signIn'
+        onSubmit={handleSignIn}
+        onFocus={() => setError({ show: false })}
+      >
+        {error.show && <Error message={error.msg} />}
         <div className='relative w-full mb-3'>
           <label
             className='block uppercase text-gray-700 text-xs font-bold mb-2'

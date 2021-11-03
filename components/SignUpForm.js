@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react'
 import { addUser, authenticateEmail } from '../lib/data'
 import UserContext from '../userContext'
+import Error from './Error'
 // import Loader from './Loader'
 
 export default function SignUpForm ({ closeDialog }) {
@@ -32,8 +33,9 @@ export default function SignUpForm ({ closeDialog }) {
     e.preventDefault()
     const addedUser = await addUser(getFormData(e.target))
     console.log(addedUser)
-    if (addedUser._id) setUser(addedUser)
-    closeDialog()
+    addedUser.error
+      ? setError({ show: true, msg: addedUser.error })
+      : (addedUser._id && setUser(addedUser), closeDialog())
   }
 
   return (
@@ -56,12 +58,11 @@ export default function SignUpForm ({ closeDialog }) {
               defaultValue={email}
               className='border-0 p-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full'
               placeholder='Email'
+              onFocus={() => setError({ show: false })}
               onChange={e => setEmail(e.target.value)}
             />
           </div>
-          {error.show && (
-            <span className='text-sm text-red-500 ml-1'>{error.msg}</span>
-          )}
+          {error.show && <Error message={error.msg} />}
           <div className='text-center mt-6'>
             <button
               className='bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded hover:shadow-lg outline-none focus:outline-none w-full'
