@@ -1,7 +1,5 @@
-import { data } from 'autoprefixer'
 import Head from 'next/head'
 import Link from 'next/link'
-import { test } from 'gray-matter'
 import useTranslation from '../hooks/useTranslation'
 import { getAllArticles } from '../lib/data'
 
@@ -36,11 +34,10 @@ export default function Home ({ articles }) {
 
 function BlogListItem ({ locale, slug, title, date, content }) {
   return (
-    <Link href={`/${locale}/blog/${slug}`}>
+    <Link href={`/blog/${slug}`} locale={locale}>
       <li className='border-gray-200 border-2 rounded-md p-4 my-3 shadow hover:shadow-lg space-y-1 cursor-pointer'>
-        <h5 className='text-xl text-blue-700'>{title}</h5>
+        <h5 className='text-xl capitalize text-blue-700'>{title}</h5>
         <div className='text-sm text-gray-600'>{date}</div>
-        <p className='truncate'>{content}</p>
       </li>
     </Link>
   )
@@ -48,6 +45,7 @@ function BlogListItem ({ locale, slug, title, date, content }) {
 
 export async function getStaticProps ({ locale }) {
   const articles = await getAllArticles(locale)
+  console.log(articles)
   return {
     props: {
       articles
