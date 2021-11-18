@@ -1,11 +1,7 @@
-const { MongoClient } = require('mongodb')
-
-const client = new MongoClient(process.env.DB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+import client from '../lib/mongodb'
 
 async function queryDb (query, data) {
+  console.log(data)
   let value
   await client.connect()
   const collection = await client.db(process.env.DB_NAME).collection('users')
@@ -21,7 +17,11 @@ async function queryDb (query, data) {
 
     case 'authenticate':
       const user = await collection.findOne({ email: data.email })
-      value = user.password === data.password ? user : null
+      value = user
+        ? user.password === data.password
+          ? user
+          : { error: 'Incorrect Password' }
+        : { error: 'Email Not Registered. Please Sign Up.' }
       break
 
     case 'readOne':
@@ -43,7 +43,7 @@ function readUsers () {
 
 async function createUser (user) {
   const ack = await queryDb('create', user)
-  return ack.insertedCount && user
+  return ack.insertedId && user
 }
 
 function readUserByEmail (email) {

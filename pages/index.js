@@ -45,7 +45,6 @@ function BlogListItem ({ locale, slug, title, date, content }) {
 
 export async function getStaticProps ({ locale }) {
   const articles = await getAllArticles(locale)
-  console.log(articles)
   return {
     props: {
       articles

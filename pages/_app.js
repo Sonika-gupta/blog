@@ -1,18 +1,16 @@
 import 'react-quill/dist/quill.snow.css'
 import '../styles/globals.css'
 import Header from '../components/Header'
-import UserContext from '../userContext'
-import { useState } from 'react'
 
-function MyApp ({ Component, pageProps }) {
-  const [user, setUser] = useState({ email: '', lname: '', fname: '' })
+import { SessionProvider } from 'next-auth/react'
+function MyApp ({ Component, pageProps: { session, ...pageProps } }) {
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <SessionProvider session={session}>
       <div className='mx-auto w-9/12 p-4'>
         <Header />
         <Component {...pageProps} />
       </div>
-    </UserContext.Provider>
+    </SessionProvider>
   )
 }
 

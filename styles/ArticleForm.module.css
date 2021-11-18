@@ -1,0 +1,7 @@
+.input {
+  @apply border-2 border-gray-200 rounded-md outline-none w-full box-border h-10 mx-2.5;
+}
+
+.label {
+  @apply flex items-center;
+}

@@ -7,9 +7,10 @@ export default async function handler (req, res) {
       user ? res.json(user) : res.send({ error: 'Not found' })
     } else if (req.method === 'POST') {
       const user = await createUser(req.body)
-      user ? res.json(user) : res.send({ error: 'Not found' })
+      console.log(user)
+      user.error ? res.send({ error: user.error }) : res.json(user)
     }
   } catch (err) {
-    res.status(500).send({ error: err })
+    res.status(500).send(err)
   }
 }

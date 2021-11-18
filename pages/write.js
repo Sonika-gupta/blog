@@ -4,6 +4,7 @@ import { addArticle } from '../lib/data'
 import { getStaticProps } from '.'
 import { useRouter } from 'next/router'
 import useTranslation from '../hooks/useTranslation'
+import styles from '../styles/ArticleForm.module.css'
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -42,28 +43,32 @@ export default function ArticleForm () {
   }
 
   return (
-    <>
+    <div className='max-w-screen-md m-auto'>
       <h3 className='text-lg text-gray-500 font-semibold my-6 text-center'>
         {translate('new article')}
       </h3>
       <form onSubmit={publish}>
-        <div className='m-2 flex w-full'>
-          <label htmlFor='title'>{translate('title')}</label>
+        <div className='m-1 flex w-full'>
+          <label className={styles.label} htmlFor='title'>
+            {translate('title')}
+          </label>
           <input
             type='text'
             name='title'
             value={form.title}
             onChange={e => setForm({ title: e.target.value })}
-            className='border-2 border-gray-200 rounded-md outline-none w-full box-border h-10 p-2 mx-3.5'
+            className={styles.input}
           />
         </div>
-        <div className='m-2 flex w-full'>
-          <label htmlFor='slug'>{translate('slug')}</label>
+        <div className='m-1 flex w-full'>
+          <label className={styles.label} htmlFor='slug'>
+            {translate('slug')}
+          </label>
           <input
             name='slug'
             value={form.slug}
             onChange={e => setForm({ slug: e.target.value })}
-            className='border-2 border-gray-200 rounded-md outline-none w-full box-border h-10 p-2 mx-3.5'
+            className={styles.input}
           />
         </div>
         <div className='mt-2'>
@@ -81,6 +86,6 @@ export default function ArticleForm () {
           {translate('publish')}
         </button>
       </form>
-    </>
+    </div>
   )
 }
