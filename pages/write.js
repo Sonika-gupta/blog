@@ -1,15 +1,11 @@
 import { useReducer, useState } from 'react'
-import dynamic from 'next/dynamic'
-import { addArticle } from '../lib/data'
-import { getStaticProps } from '.'
 import { useRouter } from 'next/router'
+import { addArticle } from '../lib/data'
 import useTranslation from '../hooks/useTranslation'
 import styles from '../styles/ArticleForm.module.css'
-
-const ReactQuill = dynamic(() => import('react-quill'), {
-  ssr: false,
-  loading: () => <p>Loading ...</p>
-})
+import dynamic from 'next/dynamic'
+import remarkGfm from 'remark-gfm'
+import ReactMarkdown from 'react-markdown'
 
 const initForm = { title: '', slug: '', content: '', lang: '' }
 
@@ -26,8 +22,8 @@ export default function ArticleForm () {
   )
 
   async function publish (e) {
-    e.preventDefault()
     console.log('submitting', form)
+    e.preventDefault()
     form.lang = locale
     const article = {
       ...form,
@@ -36,47 +32,60 @@ export default function ArticleForm () {
         timeStyle: 'short'
       })
     }
-    const added = await addArticle(article)
-    added.error
-      ? alert(added.error)
-      : (alert('Article Published'), setForm(initForm))
+    if (!article.title || !article.content) {
+      alert('Add Content First!')
+    } else {
+      const added = await addArticle(article)
+      added.error
+        ? alert(added.error)
+        : (alert('Article Published'), setForm(initForm))
+    }
   }
 
   return (
-    <div className='max-w-screen-md m-auto'>
+    <div className='max-w-screen-lg m-auto'>
       <h3 className='text-lg text-gray-500 font-semibold my-6 text-center'>
         {translate('new article')}
       </h3>
+
       <form onSubmit={publish}>
-        <div className='m-1 flex w-full'>
-          <label className={styles.label} htmlFor='title'>
-            {translate('title')}
-          </label>
-          <input
-            type='text'
-            name='title'
-            value={form.title}
-            onChange={e => setForm({ title: e.target.value })}
-            className={styles.input}
-          />
+        <div>
+          <div className='floating-input mb-5 relative'>
+            {/* <label className={styles.label} htmlFor='title'>
+              {translate('title')}
+            </label> */}
+            <input
+              type='text'
+              name='title'
+              value={form.title}
+              onChange={e => setForm({ title: e.target.value })}
+              className={styles.input}
+              placeholder={translate('title')}
+            />
+          </div>
+          <div className='m-1 flex w-full'>
+            {/* <label className={styles.label} htmlFor='slug'>
+              {translate('slug')}
+            </label> */}
+            <input
+              name='slug'
+              value={form.slug}
+              onChange={e => setForm({ slug: e.target.value })}
+              className={styles.input}
+              placeholder={translate('slug')}
+            />
+          </div>
         </div>
-        <div className='m-1 flex w-full'>
-          <label className={styles.label} htmlFor='slug'>
-            {translate('slug')}
-          </label>
-          <input
-            name='slug'
-            value={form.slug}
-            onChange={e => setForm({ slug: e.target.value })}
-            className={styles.input}
-          />
-        </div>
-        <div className='mt-2'>
-          <ReactQuill
+        <div className='w-full'>
+          {/*  <label className={styles.label} htmlFor='content'>
+            {translate('article')}
+          </label> */}
+          <textarea
+            onChange={e => setForm({ content: e.target.value })}
             value={form.content}
             name='content'
-            theme='snow'
-            onChange={value => setForm({ content: value })}
+            className={styles.text}
+            placeholder='Start Writing Here..'
           />
         </div>
         <button
@@ -85,6 +94,17 @@ export default function ArticleForm () {
         >
           {translate('publish')}
         </button>
+        <div className='border-2 border-gray-200 outline-none w-full box-border min-h-300 mx-2.5 p-4'>
+          {/*  <label className={styles.label} htmlFor='content'>
+            {translate('preview')}
+          </label> */}
+          <div className='prose overflow-x-auto'>
+            <ReactMarkdown
+              children={form.content}
+              remarkPlugins={[remarkGfm]}
+            />
+          </div>
+        </div>
       </form>
     </div>
   )

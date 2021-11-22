@@ -1,7 +1,29 @@
 .input {
-  @apply border-2 border-gray-200 rounded-md outline-none w-full box-border h-10 mx-2.5;
+  @apply appearance-none border-b border-gray-200 outline-none w-full box-border h-10 mx-2.5 p-4;
+}
+
+/* .input:focus-within ~ .label {
+  @apply transform -translate-y-6;
+}
+ */
+.text {
+  @apply block border-b border-gray-200 outline-none w-full box-border min-h-300 mx-2.5 p-4;
 }
 
 .label {
-  @apply flex items-center;
+  @apply absolute top-0 flex items-center;
 }
+
+/* .floating-input > input::placeholder {
+  color: transparent;
+}
+
+.floating-input > input:focus,
+.floating-input > input:not(:placeholder-shown) {
+  @apply pt-8;
+}
+
+.floating-input > input:focus ~ label,
+.floating-input > input:not(:placeholder-shown) ~ label {
+  @apply opacity-75 scale-75 -translate-y-3 translate-x-1;
+} */
