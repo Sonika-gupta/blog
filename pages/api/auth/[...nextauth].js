@@ -18,8 +18,8 @@ export default async function auth (req, res) {
       GoogleProvider({
         clientId: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET
-      })
-      /*       EmailProvider({
+      }),
+      EmailProvider({
         server: {
           host: process.env.EMAIL_SERVER_HOST,
           auth: {
@@ -28,7 +28,7 @@ export default async function auth (req, res) {
           }
         },
         from: process.env.EMAIL_SERVER_USER
-      }) */
+      })
     ],
     database: process.env.DB_URI
   })

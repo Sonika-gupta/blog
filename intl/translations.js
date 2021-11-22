@@ -7,6 +7,8 @@ export default {
     'new article': 'New Article',
     title: 'Title',
     slug: 'Slug',
+    article: 'Article',
+    preview: 'Preview',
     publish: 'Publish',
     count: 'Total Articles',
     zeroArticles:

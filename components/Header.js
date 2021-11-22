@@ -14,7 +14,7 @@ export default function Header () {
   const [openLogin, setOpenLogin] = useState(false)
   // const { user } = useContext(UserContext)
 
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   console.log('session', session)
 
   // console.log('refreshed user', user)
@@ -42,7 +42,7 @@ export default function Header () {
           </div>
         </Link>
         <nav className='my-4'>
-          <ul className='flex space-x-4 justify-center items-end p-2 gap-2'>
+          <ul className='flex space-x-4 justify-center items-center p-2 gap-2'>
             <li>
               <button
                 onClick={toggleLang}
@@ -61,22 +61,38 @@ export default function Header () {
                 {translate('about')}
               </Link>
             </li>
-            <li>
-              {session ? (
-                <Link href='/profile' locale={router.locale}>
-                  <span className='text-lg hover:text-blue-300 align-middle'>
-                    {session.user.name}
-                  </span>
-                </Link>
-              ) : (
-                <button
-                  onClick={() => signIn()}
-                  className='text-blue-500 cursor-pointer font-semibold'
-                >
-                  Log in
-                </button>
-              )}
-            </li>
+            {/* <Link href='/profile' locale={router.locale}>
+              <span className='text-lg hover:text-blue-300 align-middle'>
+                {session.user.name}
+              </span>
+            </Link> */}
+            {status === 'loading' ? (
+              <p>Loading...</p>
+            ) : (
+              <li>
+                {session ? (
+                  <div className='flex'>
+                    <button
+                      onClick={() => signOut()}
+                      className='text-blue-500 cursor-pointer font-semibold'
+                    >
+                      {session.user.name}
+                    </button>
+                    <img
+                      src={session.user.image}
+                      className='mx-4 my-2 w-8 h-8'
+                    />
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => signIn()}
+                    className='text-blue-500 cursor-pointer font-semibold'
+                  >
+                    Log in
+                  </button>
+                )}
+              </li>
+            )}
           </ul>
         </nav>
       </div>
